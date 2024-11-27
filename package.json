@@ -1,0 +1,39 @@
+{
+  "name": "github-repos-astro-loader",
+  "version": "0.1.0",
+  "description": "An Astro loader to fetch GitHub repositories for use as content in Astro websites",
+  "author": "Chen Asraf <contact@casraf.dev>",
+  "license": "MIT",
+  "keywords": [
+    "astro",
+    "astro-loader",
+    "loader",
+    "github",
+    "repositories",
+    "repository"
+  ],
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "ci": "pnpm install --frozen-lockfile",
+    "build": "tsc && cp README.md package.json build/",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "devDependencies": {
+    "@astropub/md": "^1.0.0",
+    "@eslint/js": "^9.15.0",
+    "@types/node": "^22.10.0",
+    "astro": "^4.16.16",
+    "prettier": "^3.4.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.16.0"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@astropub/md": "*",
+    "astro": "*",
+    "date-fns": "*",
+    "yaml": "*",
+    "zod": "*"
+  }
+}
