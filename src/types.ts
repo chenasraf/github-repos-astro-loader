@@ -5,44 +5,62 @@ import { z } from 'zod'
  * Schema for a link.
  */
 export const LinkSchema = z.object({
-  /** The title of the link. */
   title: z.string(),
-  /** The URL the link points to. */
   href: z.string(),
-  /** The icon associated with the link. */
   icon: z.string(),
 })
-export type LinkSchema = z.infer<typeof LinkSchema>
+export type LinkSchema = {
+  /** The title of the link. */
+  title: string
+  /** The URL the link points to. */
+  href: string
+  /** The icon associated with the link. */
+  icon: string
+}
 
 /**
  * Schema for a GitHub project.
  */
 export const GitHubProjectSchema = z.object({
-  /** The name of the GitHub project. */
   name: z.string(),
-  /** The title of the GitHub project. */
   title: z.string(),
-  /** The description of the GitHub project. */
   description: z.string().nullable(),
-  /** The URL of the GitHub project. */
   url: z.string(),
-  /** The number of stars the GitHub project has. */
   stars: z.number(),
-  /** The README content of the GitHub project. */
   readme: z.string().optional(),
-  /** The HTML content of the README. */
   readmeHtml: z.string().optional(),
-  /** The order of the GitHub project in a list. */
   order: z.number(),
-  /** The links associated with the GitHub project. */
   links: z.array(LinkSchema),
-  /** Whether the GitHub project is featured. */
   featured: z.boolean().optional().default(false),
-  /** Raw response from GitHub API, containing all fields. */
-  raw: z.any(),
+  raw: z.any() as z.ZodType<GitHubRepositoryAPIResponse>,
 })
-export type GitHubProjectSchema = z.infer<typeof GitHubProjectSchema>
 
+export type GitHubProjectSchema = {
+  /** The name of the GitHub project. */
+  name: string
+  /** The title of the GitHub project. */
+  title: string
+  /** The description of the GitHub project. */
+  description: string | null
+  /** The URL of the GitHub project. */
+  url: string
+  /** The number of stars the GitHub project has. */
+  stars: number
+  /** The README content of the GitHub project. */
+  readme?: string
+  /** The HTML content of the README. */
+  readmeHtml?: string
+  /** The order of the GitHub project in a list. */
+  order: number
+  /** The links associated with the GitHub project. */
+  links: LinkSchema[]
+  /** Whether the GitHub project is featured. */
+  featured: boolean
+  /** Raw response from GitHub API, containing all fields. */
+  raw: GitHubRepositoryAPIResponse
+}
+
+/** GitHub API response for a repository. */
 export type GitHubRepositoryAPIResponse = NonNullable<
   Required<Endpoints['GET /users/{username}/repos']['response']['data'][number]>
 >
@@ -68,9 +86,29 @@ export const LoaderOptions = z.object({
   /** Whether to force a reload of the projects, regardless of cache status. */
   force: z.boolean().optional(),
 })
-export type LoaderOptions = z.infer<typeof LoaderOptions>
+export type LoaderOptions = {
+  /** The username from GitHub to fetch the repositories from. */
+  username: string
+  /** Debug flag - if true, the loader will output debug information. */
+  debug?: boolean
+  /** GitHub organizations to fetch projects from. */
+  orgs?: string[]
+  /** A function to filter out projects. Filtered projects will not be parsed or saved in the collection. */
+  // eslint-disable-next-line no-unused-vars
+  filter?: (project: GitHubRepositoryAPIResponse) => boolean
+  /** The GitHub API token to use for fetching the repositories. */
+  apiToken: string
+  /** Whether to force a reload of the projects, regardless of cache status. */
+  force?: boolean
+}
 
+/** @internal */
 export const InternalLoaderOptions = LoaderOptions.required().extend({
   lastUpdated: z.date(),
 })
-export type InternalLoaderOptions = z.infer<typeof InternalLoaderOptions>
+
+/** @internal */
+export type InternalLoaderOptions = LoaderOptions & {
+  /** The last time the projects were updated. */
+  lastUpdated: Date
+}

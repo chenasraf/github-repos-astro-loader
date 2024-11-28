@@ -17,7 +17,7 @@ export async function getProjectsList(
     `https://api.github.com/users/${options.username}/repos?per_page=100`,
     options,
   )
-  for (const org of options.orgs) {
+  for (const org of options.orgs ?? []) {
     repos.push(
       ...(await fetchRepos(`https://api.github.com/orgs/${org}/repos?per_page=100`, options)),
     )
@@ -37,7 +37,7 @@ export async function getProjectsList(
       name: repo.name,
       title: repo.name,
       url: repo.html_url,
-      description: `<p>${repo.description}</p>`,
+      description: repo.description,
       stars: repo.stargazers_count,
       order: -repo.stargazers_count,
       links: [{ href: repo.html_url, icon: 'logo-github', title: 'GitHub' }],

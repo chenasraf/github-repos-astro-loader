@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { logger } from './logger.js'
-import { InternalLoaderOptions } from './types.js'
+import { GitHubRepositoryAPIResponse, InternalLoaderOptions } from './types.js'
 
 export const overridesDir = path.join(process.cwd(), 'src', 'content', 'project-overrides')
 export const projectIgnoreFile = path.join(overridesDir, '.projectignore')
@@ -10,7 +10,10 @@ export const projectKeepFile = path.join(overridesDir, '.projectkeep')
 export let projectIgnore: string[] = []
 export let projectKeep: string[] = []
 
-export async function fetchRepos(endpoint: string, options: InternalLoaderOptions) {
+export async function fetchRepos(
+  endpoint: string,
+  options: InternalLoaderOptions,
+): Promise<GitHubRepositoryAPIResponse[]> {
   const repos = []
 
   let response = await fetchReposPage(endpoint, options)

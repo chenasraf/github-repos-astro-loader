@@ -38,6 +38,10 @@ async function reloadProjects(
   logger.log('Projects loaded')
 }
 
+/**
+ * A loader that fetches GitHub repositories for a user and organization(s).
+ * @param opts The loader options.
+ */
 export function githubProjectsLoader(opts: LoaderOptions): Loader {
   return {
     name: 'github-repos-loader',
