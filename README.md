@@ -11,9 +11,21 @@ In your `src/content/config.ts` file, add a new collection and use the loader:
 import githubReposLoader from 'github-repos-astro-loader'
 const project = defineCollection({
   loader: githubReposLoader({
-    username: 'myusername', // The GitHub username you want to fetch the repositories for (required)
+    // Required
+    apiToken: GITHUB_TOKEN, // GitHub API token to use for requests
+    username: 'myusername', // The GitHub username you want to fetch the repositories for
+
+    // Optional
     orgs: ['myorg'], // A list of GitHub orgs to fetch repositories from
     debug: true, // Output debug logs during processing
+    force: false, // Ignore cache and force a full re-fetch
+    filter: (repo) => // Filter repositories to include in the collection
+      [
+        !repo.fork,
+        repo.stargazers_count! > 0,
+        //
+      ].every(Boolean),
+    }),
   }),
 })
 ```

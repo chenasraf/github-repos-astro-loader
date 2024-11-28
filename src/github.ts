@@ -1,10 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { logger } from './logger.js'
-
-const GITHUB_TOKEN = process.env.GH_TOKEN || process.env.GITHUB_TOKEN!
-export const headers = new Headers()
-headers.set('Authorization', `Bearer ${GITHUB_TOKEN}`)
+import { InternalLoaderOptions } from './types.js'
 
 export const overridesDir = path.join(process.cwd(), 'src', 'content', 'project-overrides')
 export const projectIgnoreFile = path.join(overridesDir, '.projectignore')
@@ -13,21 +10,22 @@ export const projectKeepFile = path.join(overridesDir, '.projectkeep')
 export let projectIgnore: string[] = []
 export let projectKeep: string[] = []
 
-export async function fetchRepos(endpoint: string) {
+export async function fetchRepos(endpoint: string, options: InternalLoaderOptions) {
   const repos = []
 
-  let response = await fetchReposPage(endpoint)
+  let response = await fetchReposPage(endpoint, options)
   repos.push(...response.repos)
 
   while (response.url) {
-    response = await fetchReposPage(response.url)
+    response = await fetchReposPage(response.url, options)
     repos.push(...response.repos)
   }
 
   return repos
 }
 
-async function fetchReposPage(endpoint: string) {
+async function fetchReposPage(endpoint: string, options: InternalLoaderOptions) {
+  const headers = getAuthorization(options)
   logger.log('Fetching endpoint', endpoint)
   const response = await fetch(endpoint, { headers })
   if (!response.ok) {
@@ -60,4 +58,10 @@ async function loadFileList(file: string): Promise<string[]> {
 export async function reloadOverrides() {
   projectIgnore = await loadFileList(projectIgnoreFile)
   projectKeep = await loadFileList(projectKeepFile)
+}
+
+export function getAuthorization(options: InternalLoaderOptions): Headers {
+  const headers = new Headers()
+  headers.set('Authorization', `Bearer ${options.apiToken}`)
+  return headers
 }

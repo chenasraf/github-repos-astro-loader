@@ -3,10 +3,10 @@ import path from 'node:path'
 import yaml from 'yaml'
 import { parseJSON as parseDate } from 'date-fns/parseJSON'
 import { formatISO as formatDate } from 'date-fns/formatISO'
-import { GitHubProjectSchema, InternalLoaderOptions } from './types.js'
+import { GitHubProjectSchema, GitHubRepositoryAPIResponse, InternalLoaderOptions } from './types.js'
 import { fileExists, parseMarkdown } from './utils.js'
 import { logger } from './logger.js'
-import { fetchRepos, headers, overridesDir, projectIgnore, projectKeep } from './github.js'
+import { fetchRepos, getAuthorization, overridesDir, projectIgnore, projectKeep } from './github.js'
 
 export async function getProjectsList(
   options: InternalLoaderOptions,
@@ -15,9 +15,12 @@ export async function getProjectsList(
 
   const repos = await fetchRepos(
     `https://api.github.com/users/${options.username}/repos?per_page=100`,
+    options,
   )
   for (const org of options.orgs) {
-    repos.push(...(await fetchRepos(`https://api.github.com/orgs/${org}/repos?per_page=100`)))
+    repos.push(
+      ...(await fetchRepos(`https://api.github.com/orgs/${org}/repos?per_page=100`, options)),
+    )
   }
 
   logger.log(`Fetched ${repos.length} projects from GitHub`)
@@ -26,7 +29,7 @@ export async function getProjectsList(
   for (const repo of repos) {
     logger.log(`Processing ${repo.name}`)
     if (!projectFilter(repo, options)) {
-      logger.log(`Skipping ${repo.name}`)
+      logger.log()
       continue
     }
 
@@ -38,6 +41,7 @@ export async function getProjectsList(
       stars: repo.stargazers_count,
       order: -repo.stargazers_count,
       links: [{ href: repo.html_url, icon: 'logo-github', title: 'GitHub' }],
+      raw: repo,
     })
 
     const overridesFile = path.join(overridesDir, `${project.name}.md`)
@@ -75,7 +79,7 @@ export async function getProjectsList(
 
     const readmeResponse = await fetch(
       `https://raw.githubusercontent.com/${options.username}/${repo.name}/${repo.default_branch}/README.md`,
-      { headers },
+      { headers: getAuthorization(options) },
     )
     const readme = readmeResponse.ok ? await readmeResponse.text() : undefined
     project.readme = readme
@@ -85,14 +89,15 @@ export async function getProjectsList(
     projects.push(project)
 
     logger.log(`Added project ${repo.name}`)
+    logger.log()
   }
 
   return projects
 }
 
 function projectFilter(
-  project: Record<string, any>,
-  { lastUpdated }: InternalLoaderOptions,
+  project: GitHubRepositoryAPIResponse,
+  { lastUpdated, filter }: InternalLoaderOptions,
 ): boolean {
   if (projectKeep.includes(project.name)) {
     return true
@@ -100,10 +105,17 @@ function projectFilter(
   if (projectIgnore.includes(project.name)) {
     return false
   }
-  return [
-    parseDate(project.updated_at) > lastUpdated,
-    !project.fork,
-    project.stargazers_count > 0,
-    //
-  ].every(Boolean)
+  const internalFilter = parseDate(project.updated_at!) > lastUpdated
+  if (!internalFilter) {
+    logger.log(`Skipping ${project.name} (internal filter)`)
+    return false
+  }
+  if (filter) {
+    const externalFilter = filter(project as any)
+    if (!externalFilter) {
+      logger.log(`Skipping ${project.name} (external filter)`)
+      return false
+    }
+  }
+  return true
 }

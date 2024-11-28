@@ -11,7 +11,9 @@ async function reloadProjects(
   opts: LoaderOptions,
 ) {
   logger.enabled = opts.debug ?? false
-  const lastUpdated = parseDate(meta.get('lastUpdated') ?? '1970-01-01T00:00:00Z')
+  const lastUpdated = parseDate(
+    (opts.force ? undefined : meta.get('lastUpdated')) ?? '1970-01-01T00:00:00Z',
+  )
 
   await reloadOverrides()
   const options = InternalLoaderOptions.parse({
