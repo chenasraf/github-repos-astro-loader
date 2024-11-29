@@ -3,14 +3,19 @@ import path from 'node:path'
 import yaml from 'yaml'
 import { parseJSON as parseDate } from 'date-fns/parseJSON'
 import { formatISO as formatDate } from 'date-fns/formatISO'
-import { GitHubProjectSchema, GitHubRepositoryAPIResponse, InternalLoaderOptions } from './types.js'
+import {
+  GitHubProjectSchema,
+  GitHubProjectType,
+  GitHubRepositoryAPIResponse,
+  InternalLoaderOptionsType,
+} from './types.js'
 import { fileExists, parseMarkdown } from './utils.js'
 import { logger } from './logger.js'
 import { fetchRepos, getAuthorization, projectIgnore, projectKeep } from './github.js'
 
 export async function getProjectsList(
-  options: InternalLoaderOptions,
-): Promise<GitHubProjectSchema[]> {
+  options: InternalLoaderOptionsType,
+): Promise<GitHubProjectType[]> {
   logger.log(`Fetching projects list from GitHub (since: ${formatDate(options.lastUpdated)})`)
 
   const repos = await fetchRepos(
@@ -24,7 +29,7 @@ export async function getProjectsList(
   }
 
   logger.log(`Fetched ${repos.length} projects from GitHub`)
-  const projects: GitHubProjectSchema[] = []
+  const projects: GitHubProjectType[] = []
 
   for (const repo of repos) {
     logger.log(`Processing ${repo.name}`)
@@ -42,6 +47,7 @@ export async function getProjectsList(
       order: -repo.stargazers_count,
       links: [{ href: repo.html_url, icon: 'logo-github', title: 'GitHub' }],
       raw: repo,
+      featured: false,
     })
 
     const overridesFile = path.join(options.overridesDir, `${project.name}.md`)
@@ -52,7 +58,7 @@ export async function getProjectsList(
       const lines = allLines.slice(0, allLines.lastIndexOf('---')).join('\n').trim()
       try {
         // TODO use GitHubProjectSchema.parse
-        const obj = yaml.parse(lines) as GitHubProjectSchema
+        const obj = yaml.parse(lines) as GitHubProjectType
         for (const link of obj.links ?? []) {
           const found = project.links.findIndex((i) => i.href === link.href)
           if (found >= 0) {
@@ -97,7 +103,7 @@ export async function getProjectsList(
 
 function projectFilter(
   project: GitHubRepositoryAPIResponse,
-  { lastUpdated, filter }: InternalLoaderOptions,
+  { lastUpdated, filter }: InternalLoaderOptionsType,
 ): boolean {
   if (projectKeep.includes(project.name)) {
     return true

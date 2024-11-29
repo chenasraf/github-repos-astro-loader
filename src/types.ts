@@ -13,7 +13,7 @@ export const LinkSchema = z.object({
 /**
  * Schema for a link.
  */
-export type LinkSchema = {
+export type TLinkSchema = {
   /** The title of the link. */
   title: string
   /** The URL the link points to. */
@@ -35,14 +35,14 @@ export const GitHubProjectSchema = z.object({
   readmeHtml: z.string().optional(),
   order: z.number(),
   links: z.array(LinkSchema),
-  featured: z.boolean().optional().default(false),
+  featured: z.boolean(),
   raw: z.any() as z.ZodType<GitHubRepositoryAPIResponse>,
 })
 
 /**
  * Schema for a GitHub project.
  */
-export type GitHubProjectSchema = {
+export type GitHubProjectType = {
   /** The name of the GitHub project. */
   name: string
   /** The title of the GitHub project. */
@@ -60,7 +60,7 @@ export type GitHubProjectSchema = {
   /** The order of the GitHub project in a list. */
   order: number
   /** The links associated with the GitHub project. */
-  links: LinkSchema[]
+  links: TLinkSchema[]
   /** Whether the GitHub project is featured. */
   featured: boolean
   /** Raw response from GitHub API, containing all fields. */
@@ -77,7 +77,7 @@ export type GitHubRepositoryAPIResponse = NonNullable<
  */
 export const LoaderOptions = z.object({
   username: z.string(),
-  debug: z.boolean().optional(),
+  debug: z.boolean(),
   orgs: z.array(z.string()).optional(),
   filter: z
     .function()
@@ -85,14 +85,14 @@ export const LoaderOptions = z.object({
     .returns(z.boolean())
     .optional(),
   apiToken: z.string(),
-  force: z.boolean().optional().default(false),
+  force: z.boolean(),
   overridesDir: z.string().optional(),
 })
 
 /**
  * Schema for loader options.
  */
-export type LoaderOptions = {
+export type LoaderOptionsType = {
   /** The username from GitHub to fetch the repositories from. */
   username: string
   /** Debug flag - if true, the loader will output debug information. */
@@ -116,7 +116,7 @@ export const InternalLoaderOptions = LoaderOptions.required().extend({
 })
 
 /** @internal */
-export type InternalLoaderOptions = Required<LoaderOptions> & {
+export type InternalLoaderOptionsType = Required<LoaderOptionsType> & {
   /** The last time the projects were updated. */
   lastUpdated: Date
 }

@@ -1,12 +1,12 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { logger } from './logger.js'
-import { GitHubRepositoryAPIResponse, InternalLoaderOptions } from './types.js'
+import { GitHubRepositoryAPIResponse, InternalLoaderOptionsType } from './types.js'
 
-export function getProjectIgnoreFile(options: Pick<InternalLoaderOptions, 'overridesDir'>) {
+export function getProjectIgnoreFile(options: Pick<InternalLoaderOptionsType, 'overridesDir'>) {
   return path.resolve(options.overridesDir, '.projectignore')
 }
-export function getProjectKeepFile(options: Pick<InternalLoaderOptions, 'overridesDir'>) {
+export function getProjectKeepFile(options: Pick<InternalLoaderOptionsType, 'overridesDir'>) {
   return path.resolve(options.overridesDir, '.projectkeep')
 }
 
@@ -15,7 +15,7 @@ export let projectKeep: string[] = []
 
 export async function fetchRepos(
   endpoint: string,
-  options: InternalLoaderOptions,
+  options: InternalLoaderOptionsType,
 ): Promise<GitHubRepositoryAPIResponse[]> {
   const repos = []
 
@@ -30,7 +30,7 @@ export async function fetchRepos(
   return repos
 }
 
-async function fetchReposPage(endpoint: string, options: InternalLoaderOptions) {
+async function fetchReposPage(endpoint: string, options: InternalLoaderOptionsType) {
   const headers = getAuthorization(options)
   logger.log('Fetching endpoint', endpoint)
   const response = await fetch(endpoint, { headers })
@@ -61,12 +61,12 @@ async function loadFileList(file: string): Promise<string[]> {
     .filter((x) => x[0] !== '#')
 }
 
-export async function reloadOverrides(options: InternalLoaderOptions) {
+export async function reloadOverrides(options: InternalLoaderOptionsType) {
   projectIgnore = await loadFileList(getProjectIgnoreFile(options))
   projectKeep = await loadFileList(getProjectKeepFile(options))
 }
 
-export function getAuthorization(options: InternalLoaderOptions): Headers {
+export function getAuthorization(options: InternalLoaderOptionsType): Headers {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${options.apiToken}`)
   return headers

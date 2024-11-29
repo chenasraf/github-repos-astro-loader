@@ -2,17 +2,18 @@ import type { Loader, LoaderContext } from 'astro/loaders'
 import { reloadOverrides } from './github.js'
 import { parseJSON as parseDate } from 'date-fns/parseJSON'
 import { formatISO as formatDate } from 'date-fns/formatISO'
-import type { LoaderOptions } from './types.js'
+import type { GitHubProjectType, LoaderOptionsType } from './types.js'
 import { GitHubProjectSchema, InternalLoaderOptions } from './types.js'
 import { logger } from './logger.js'
 import { getProjectsList } from './parser.js'
 import path from 'path'
+import { z } from 'zod'
 
 const defaultOverridesDir = path.join(process.cwd(), 'src', 'content', 'project-overrides')
 
 async function reloadProjects(
   { store, meta }: Pick<LoaderContext, 'store' | 'meta'>,
-  opts: LoaderOptions,
+  opts: LoaderOptionsType,
 ) {
   logger.enabled = opts.debug ?? false
   const lastUpdated = parseDate(
@@ -21,6 +22,7 @@ async function reloadProjects(
 
   const options = InternalLoaderOptions.parse({
     debug: false,
+    force: false,
     orgs: [],
     overridesDir: defaultOverridesDir,
     ...opts,
@@ -47,10 +49,10 @@ async function reloadProjects(
  * A loader that fetches GitHub repositories for a user and organization(s).
  * @param opts The loader options.
  */
-export function githubProjectsLoader(opts: LoaderOptions): Loader {
+export function githubProjectsLoader(opts: LoaderOptionsType): Loader {
   return {
     name: 'github-repos-loader',
-    schema: GitHubProjectSchema,
+    schema: GitHubProjectSchema as unknown as z.ZodType<GitHubProjectType>,
     load: async ({ store, meta, watcher }) => {
       await reloadProjects({ store, meta }, opts)
 
