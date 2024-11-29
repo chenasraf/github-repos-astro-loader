@@ -1,6 +1,6 @@
 {
   "name": "github-repos-astro-loader",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "An Astro loader to fetch GitHub repositories for use as content in Astro websites",
   "author": "Chen Asraf <contact@casraf.dev>",
   "license": "MIT",
