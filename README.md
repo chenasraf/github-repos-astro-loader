@@ -59,9 +59,17 @@ The default directory is `src/content/project-overrides`.
 Just create an md file with all the related fields you want to override. Insert the readme Markdown
 content under the properties.
 
+These fields are editable:
+
+- `title`
+- `description`
+- `order`
+- `featured`
+
+Example file: `src/content/project-overrides/my_project.md`
+
 ```md
 ---
-# src/content/project-overrides/my_project.md
 title: My Project # instead of my_project
 featured: true
 ---

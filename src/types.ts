@@ -85,7 +85,7 @@ export const LoaderOptions = z.object({
     .returns(z.boolean())
     .optional(),
   apiToken: z.string(),
-  force: z.boolean().optional(),
+  force: z.boolean().optional().default(false),
   overridesDir: z.string().optional(),
 })
 

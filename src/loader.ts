@@ -1,8 +1,9 @@
 import type { Loader, LoaderContext } from 'astro/loaders'
-import { getProjectIgnoreFile, getProjectKeepFile, reloadOverrides } from './github.js'
+import { reloadOverrides } from './github.js'
 import { parseJSON as parseDate } from 'date-fns/parseJSON'
 import { formatISO as formatDate } from 'date-fns/formatISO'
-import { LoaderOptions, InternalLoaderOptions } from './types.js'
+import type { LoaderOptions } from './types.js'
+import { GitHubProjectSchema, InternalLoaderOptions } from './types.js'
 import { logger } from './logger.js'
 import { getProjectsList } from './parser.js'
 import path from 'path'
@@ -49,12 +50,13 @@ async function reloadProjects(
 export function githubProjectsLoader(opts: LoaderOptions): Loader {
   return {
     name: 'github-repos-loader',
+    schema: GitHubProjectSchema,
     load: async ({ store, meta, watcher }) => {
       await reloadProjects({ store, meta }, opts)
 
       watcher?.on('change', async (filename) => {
-        logger.log('Change detected:', filename)
         if (path.dirname(filename) === (opts.overridesDir ?? defaultOverridesDir)) {
+          logger.log('Change detected:', filename)
           await reloadProjects({ store, meta }, opts)
         }
       })
