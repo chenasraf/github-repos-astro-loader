@@ -3,6 +3,8 @@
 This is a content loader for Astro that fetches GitHub repositories and their README files, so you
 can list them easily in your Astro site.
 
+[See a demo on my website](https://casraf.dev/projects)
+
 ## Usage
 
 In your `src/content/config.ts` file, add a new collection and use the loader:
@@ -19,6 +21,7 @@ const project = defineCollection({
     orgs: ['myorg'], // A list of GitHub orgs to fetch repositories from
     debug: true, // Output debug logs during processing
     force: false, // Ignore cache and force a full re-fetch
+    overridesDir: 'src/content/project-overrides', // Directory to look for overrides
     filter: (repo) => // Filter repositories to include in the collection
       [
         !repo.fork,
@@ -44,6 +47,26 @@ const projects = await getCollection('project')
     {projects.map((project) => <ProjectCard project={project} />)}
   </div>
 </div>
+```
+
+### Overrides
+
+You might want to add, or modify data for a project. To keep this easy to maintain, and to allow
+markdown parsing, you can create a `my_project.md` file inside your `overridesDir`.
+
+The default directory is `src/content/project-overrides`.
+
+Just create an md file with all the related fields you want to override. Insert the readme Markdown
+content under the properties.
+
+```md
+---
+# src/content/project-overrides/my_project.md
+title: My Project # instead of my_project
+featured: true
+---
+
+This is the README content for my project. Hooray!
 ```
 
 ## Contributing

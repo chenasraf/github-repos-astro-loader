@@ -3,9 +3,12 @@ import path from 'node:path'
 import { logger } from './logger.js'
 import { GitHubRepositoryAPIResponse, InternalLoaderOptions } from './types.js'
 
-export const overridesDir = path.join(process.cwd(), 'src', 'content', 'project-overrides')
-export const projectIgnoreFile = path.join(overridesDir, '.projectignore')
-export const projectKeepFile = path.join(overridesDir, '.projectkeep')
+export function getProjectIgnoreFile(options: Pick<InternalLoaderOptions, 'overridesDir'>) {
+  return path.resolve(options.overridesDir, '.projectignore')
+}
+export function getProjectKeepFile(options: Pick<InternalLoaderOptions, 'overridesDir'>) {
+  return path.resolve(options.overridesDir, '.projectkeep')
+}
 
 export let projectIgnore: string[] = []
 export let projectKeep: string[] = []
@@ -58,9 +61,9 @@ async function loadFileList(file: string): Promise<string[]> {
     .filter((x) => x[0] !== '#')
 }
 
-export async function reloadOverrides() {
-  projectIgnore = await loadFileList(projectIgnoreFile)
-  projectKeep = await loadFileList(projectKeepFile)
+export async function reloadOverrides(options: InternalLoaderOptions) {
+  projectIgnore = await loadFileList(getProjectIgnoreFile(options))
+  projectKeep = await loadFileList(getProjectKeepFile(options))
 }
 
 export function getAuthorization(options: InternalLoaderOptions): Headers {

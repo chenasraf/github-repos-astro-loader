@@ -9,6 +9,10 @@ export const LinkSchema = z.object({
   href: z.string(),
   icon: z.string(),
 })
+
+/**
+ * Schema for a link.
+ */
 export type LinkSchema = {
   /** The title of the link. */
   title: string
@@ -35,6 +39,9 @@ export const GitHubProjectSchema = z.object({
   raw: z.any() as z.ZodType<GitHubRepositoryAPIResponse>,
 })
 
+/**
+ * Schema for a GitHub project.
+ */
 export type GitHubProjectSchema = {
   /** The name of the GitHub project. */
   name: string
@@ -69,23 +76,22 @@ export type GitHubRepositoryAPIResponse = NonNullable<
  * Schema for loader options.
  */
 export const LoaderOptions = z.object({
-  /** The username from GitHub to fetch the repositories from. */
   username: z.string(),
-  /** Debug flag - if true, the loader will output debug information. */
   debug: z.boolean().optional(),
-  /** GitHub organizations to fetch projects from. */
   orgs: z.array(z.string()).optional(),
-  /** A function to filter out projects. Filtered projects will not be parsed or saved in the collection. */
   filter: z
     .function()
     .args(z.any() as z.ZodType<GitHubRepositoryAPIResponse>)
     .returns(z.boolean())
     .optional(),
-  /** The GitHub API token to use for fetching the repositories. */
   apiToken: z.string(),
-  /** Whether to force a reload of the projects, regardless of cache status. */
   force: z.boolean().optional(),
+  overridesDir: z.string().optional(),
 })
+
+/**
+ * Schema for loader options.
+ */
 export type LoaderOptions = {
   /** The username from GitHub to fetch the repositories from. */
   username: string
@@ -100,6 +106,8 @@ export type LoaderOptions = {
   apiToken: string
   /** Whether to force a reload of the projects, regardless of cache status. */
   force?: boolean
+  /** The directory where project overrides are stored (default: `src/content/project-overrides`). */
+  overridesDir?: string
 }
 
 /** @internal */
@@ -108,7 +116,7 @@ export const InternalLoaderOptions = LoaderOptions.required().extend({
 })
 
 /** @internal */
-export type InternalLoaderOptions = LoaderOptions & {
+export type InternalLoaderOptions = Required<LoaderOptions> & {
   /** The last time the projects were updated. */
   lastUpdated: Date
 }

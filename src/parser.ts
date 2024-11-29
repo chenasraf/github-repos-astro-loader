@@ -6,7 +6,7 @@ import { formatISO as formatDate } from 'date-fns/formatISO'
 import { GitHubProjectSchema, GitHubRepositoryAPIResponse, InternalLoaderOptions } from './types.js'
 import { fileExists, parseMarkdown } from './utils.js'
 import { logger } from './logger.js'
-import { fetchRepos, getAuthorization, overridesDir, projectIgnore, projectKeep } from './github.js'
+import { fetchRepos, getAuthorization, projectIgnore, projectKeep } from './github.js'
 
 export async function getProjectsList(
   options: InternalLoaderOptions,
@@ -44,7 +44,7 @@ export async function getProjectsList(
       raw: repo,
     })
 
-    const overridesFile = path.join(overridesDir, `${project.name}.md`)
+    const overridesFile = path.join(options.overridesDir, `${project.name}.md`)
 
     if (await fileExists(overridesFile)) {
       const content = await fs.readFile(overridesFile, 'utf8')
