@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.1.1...v1.1.2) (2024-11-29)
+
+
+### Bug Fixes
+
+* schema & argument types ([1689922](https://github.com/chenasraf/github-repos-astro-loader/commit/16899229751edf811543fc12f4377e94052ed2cf))
+
 ## [1.1.1](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.1.0...v1.1.1) (2024-11-29)
 
 
