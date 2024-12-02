@@ -19,7 +19,7 @@
     "ci": "pnpm install --frozen-lockfile",
     "dev": "rm -rf build && mkdir build && cp README.md package.json build/ && tsc --watch",
     "build": "tsc && cp README.md package.json build/",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "vitest"
   },
   "devDependencies": {
     "@astropub/md": "^1.0.0",
@@ -29,7 +29,8 @@
     "astro": "^4.16.16",
     "prettier": "^3.4.1",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.16.0"
+    "typescript-eslint": "^8.16.0",
+    "vitest": "^2.1.8"
   },
   "peerDependencies": {
     "@astropub/md": "*",
