@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.1.2...v1.2.0) (2024-12-02)
+
+
+### Features
+
+* make username optional ([a9de1a6](https://github.com/chenasraf/github-repos-astro-loader/commit/a9de1a6b23afffb9282a9845a59aa94a3016117c))
+* prettier logger ([c7c086a](https://github.com/chenasraf/github-repos-astro-loader/commit/c7c086a84516653b6f0df4c6a18f823cbc025ee7))
+
+
+### Bug Fixes
+
+* always log errors/warnings ([3a00121](https://github.com/chenasraf/github-repos-astro-loader/commit/3a00121ab76288dca3f8daeb681d2d1021ebc080))
+* use qualified repo path in readme get ([d94eb5c](https://github.com/chenasraf/github-repos-astro-loader/commit/d94eb5c4f257ea94202f0d0d803d03623a019844))
+
 ## [1.1.2](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.1.1...v1.1.2) (2024-11-29)
 
 
