@@ -18,10 +18,20 @@ export async function getProjectsList(
 ): Promise<GitHubProjectType[]> {
   logger.log(`Fetching projects list from GitHub (since: ${formatDate(options.lastUpdated)})`)
 
-  const repos = await fetchRepos(
-    `https://api.github.com/users/${options.username}/repos?per_page=100`,
-    options,
-  )
+  if (!options.username && (!options.orgs || options.orgs.length === 0)) {
+    logger.error('No username or orgs provided')
+    return []
+  }
+
+  const repos: GitHubRepositoryAPIResponse[] = []
+  if (options.username) {
+    repos.push(
+      ...(await fetchRepos(
+        `https://api.github.com/users/${options.username}/repos?per_page=100`,
+        options,
+      )),
+    )
+  }
   for (const org of options.orgs ?? []) {
     repos.push(
       ...(await fetchRepos(`https://api.github.com/orgs/${org}/repos?per_page=100`, options)),
@@ -89,7 +99,7 @@ export async function getProjectsList(
     )
     const readme = readmeResponse.ok ? await readmeResponse.text() : undefined
     project.readme = readme
-    logger.log(`Rendering README for ${repo.name}`)
+    logger.log(`Rendering README for ${repo.full_name}`)
     const { html } = await parseMarkdown(readme ?? '')
     project.readmeHtml = html
     projects.push(project)

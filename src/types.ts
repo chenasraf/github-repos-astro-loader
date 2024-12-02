@@ -7,7 +7,7 @@ import { z } from 'zod'
 export const LinkSchema = z.object({
   title: z.string(),
   href: z.string(),
-  icon: z.string(),
+  icon: z.string().optional(),
 })
 
 /**
@@ -19,7 +19,7 @@ export type TLinkSchema = {
   /** The URL the link points to. */
   href: string
   /** The icon associated with the link. */
-  icon: string
+  icon?: string
 }
 
 /**
@@ -76,7 +76,7 @@ export type GitHubRepositoryAPIResponse = NonNullable<
  * Schema for loader options.
  */
 export const LoaderOptions = z.object({
-  username: z.string(),
+  username: z.string().optional(),
   debug: z.boolean(),
   orgs: z.array(z.string()).optional(),
   filter: z
@@ -93,12 +93,18 @@ export const LoaderOptions = z.object({
  * Schema for loader options.
  */
 export type LoaderOptionsType = {
-  /** The username from GitHub to fetch the repositories from. */
-  username: string
+  /**
+   * The username from GitHub to fetch the repositories from.
+   * At least one of `username`, `orgs` must be present in order to have any content to load.
+   */
+  username?: string
+  /**
+   * GitHub organizations to fetch projects from.
+   * At least one of `username`, `orgs` must be present in order to have any content to load.
+   */
+  orgs?: string[]
   /** Debug flag - if true, the loader will output debug information. */
   debug?: boolean
-  /** GitHub organizations to fetch projects from. */
-  orgs?: string[]
   /** A function to filter out projects. Filtered projects will not be parsed or saved in the collection. */
   // eslint-disable-next-line no-unused-vars
   filter?: (project: GitHubRepositoryAPIResponse) => boolean

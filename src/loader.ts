@@ -28,6 +28,7 @@ async function reloadProjects(
     ...opts,
     lastUpdated,
   })
+
   await reloadOverrides(options)
   const projects = await getProjectsList(options)
 

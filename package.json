@@ -17,6 +17,7 @@
   "type": "module",
   "scripts": {
     "ci": "pnpm install --frozen-lockfile",
+    "dev": "rm -rf build && mkdir build && cp README.md package.json build/ && tsc --watch",
     "build": "tsc && cp README.md package.json build/",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
