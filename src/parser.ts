@@ -84,7 +84,7 @@ export async function getProjectsList(
     logger.log(`Fetching README for ${repo.name}`)
 
     const readmeResponse = await fetch(
-      `https://raw.githubusercontent.com/${options.username}/${repo.name}/${repo.default_branch}/README.md`,
+      `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch}/README.md`,
       { headers: getAuthorization(options) },
     )
     const readme = readmeResponse.ok ? await readmeResponse.text() : undefined
