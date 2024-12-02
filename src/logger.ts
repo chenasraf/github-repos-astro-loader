@@ -1,10 +1,15 @@
 class Logger {
   enabled: boolean = false
+  prefix: string = 'GHREPO'
 
   #log(type: 'log' | 'error' | 'warn', ...args: any[]) {
     if (this.enabled) {
-      console[type](...args)
+      this.#verboseLog(type, ...args)
     }
+  }
+
+  #verboseLog(type: 'log' | 'error' | 'warn', ...args: any[]) {
+    console[type](`[${this.prefix}]`, ...args)
   }
 
   log(...args: any[]) {
@@ -12,11 +17,11 @@ class Logger {
   }
 
   error(...args: any[]) {
-    this.#log('error', ...args)
+    this.#verboseLog('error', ...args)
   }
 
   warn(...args: any[]) {
-    this.#log('warn', ...args)
+    this.#verboseLog('warn', ...args)
   }
 }
 
