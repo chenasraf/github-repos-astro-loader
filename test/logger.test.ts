@@ -57,7 +57,6 @@ describe('logger', () => {
     test('colors time properly', () => {
       logger.log('test')
       const args = spies.log.mock.calls[0]
-      originalConsole.log('ARGS: ', JSON.stringify(spies.log.mock.calls))
       const joined = args.join(' ')
       const timeColorIdx = 0
       expect(joined.slice(timeColorIdx, timeColorIdx + 4)).toBe('\x1b[2m')
