@@ -60,6 +60,7 @@ export function githubProjectsLoader(opts: LoaderOptionsType): Loader {
       watcher?.on('change', async (filename) => {
         if (path.dirname(filename) === (opts.overridesDir ?? defaultOverridesDir)) {
           logger.log('Change detected:', filename)
+          meta.delete('lastUpdated')
           await reloadProjects({ store, meta }, opts)
         }
       })
