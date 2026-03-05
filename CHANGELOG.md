@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.2.0...v1.2.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* clear cache on overrides change ([2566fba](https://github.com/chenasraf/github-repos-astro-loader/commit/2566fba03adea4767266e734c1db644f0e48d1a5))
+
 ## [1.2.0](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.1.2...v1.2.0) (2024-12-02)
 
 
