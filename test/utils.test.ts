@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { stripHtml, fileExists } from '../src/utils'
+import { stripHtml, fileExists, absolutizeReadmeAssets } from '../src/utils'
 import path from 'path'
 
 describe('utils', () => {
@@ -40,6 +40,54 @@ describe('utils', () => {
 
     test('returns false for non-existing directory', async () => {
       expect(await fileExists('/nonexistent/dir')).toBe(false)
+    })
+  })
+
+  describe('absolutizeReadmeAssets', () => {
+    const base = 'https://raw.githubusercontent.com/owner/repo/main/'
+
+    test('rewrites root-absolute image sources', () => {
+      expect(absolutizeReadmeAssets('<img src="/demo.gif">', 'owner/repo', 'main')).toBe(
+        `<img src="${base}demo.gif">`,
+      )
+    })
+
+    test('rewrites repo-relative image sources', () => {
+      expect(absolutizeReadmeAssets('<img src="docs/demo.png">', 'owner/repo', 'main')).toBe(
+        `<img src="${base}docs/demo.png">`,
+      )
+    })
+
+    test('strips leading ./ from relative sources', () => {
+      expect(absolutizeReadmeAssets('<img src="./demo.png">', 'owner/repo', 'main')).toBe(
+        `<img src="${base}demo.png">`,
+      )
+    })
+
+    test('leaves absolute http(s) sources untouched', () => {
+      const html = '<img src="https://example.com/demo.png">'
+      expect(absolutizeReadmeAssets(html, 'owner/repo', 'main')).toBe(html)
+    })
+
+    test('leaves data: sources untouched', () => {
+      const html = '<img src="data:image/png;base64,AAAA">'
+      expect(absolutizeReadmeAssets(html, 'owner/repo', 'main')).toBe(html)
+    })
+
+    test('does not rewrite anchor hrefs', () => {
+      const html = '<a href="/docs">docs</a>'
+      expect(absolutizeReadmeAssets(html, 'owner/repo', 'main')).toBe(html)
+    })
+
+    test('rewrites multiple images and preserves other attributes', () => {
+      const html = '<img alt="a" src="/a.png"><img src="b.png" width="10">'
+      expect(absolutizeReadmeAssets(html, 'owner/repo', 'main')).toBe(
+        `<img alt="a" src="${base}a.png"><img src="${base}b.png" width="10">`,
+      )
+    })
+
+    test('returns empty string unchanged', () => {
+      expect(absolutizeReadmeAssets('', 'owner/repo', 'main')).toBe('')
     })
   })
 })

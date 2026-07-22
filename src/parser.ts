@@ -9,7 +9,7 @@ import {
   GitHubRepositoryAPIResponse,
   InternalLoaderOptionsType,
 } from './types.js'
-import { fileExists, parseMarkdown } from './utils.js'
+import { absolutizeReadmeAssets, fileExists, parseMarkdown } from './utils.js'
 import { logger } from './logger.js'
 import { fetchRepos, getAuthorization, projectIgnore, projectKeep } from './github.js'
 
@@ -101,7 +101,7 @@ export async function getProjectsList(
     project.readme = readme
     logger.log(`Rendering README for ${repo.full_name}`)
     const { html } = await parseMarkdown(readme ?? '')
-    project.readmeHtml = html
+    project.readmeHtml = absolutizeReadmeAssets(html, repo.full_name, repo.default_branch)
     projects.push(project)
 
     logger.log(`Added project ${repo.name}`)
