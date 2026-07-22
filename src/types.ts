@@ -80,9 +80,7 @@ export const LoaderOptions = z.object({
   debug: z.boolean(),
   orgs: z.array(z.string()).optional(),
   filter: z
-    .function()
-    .args(z.any() as z.ZodType<GitHubRepositoryAPIResponse>)
-    .returns(z.boolean())
+    .custom<(project: GitHubRepositoryAPIResponse) => boolean>((val) => typeof val === 'function')
     .optional(),
   apiToken: z.string(),
   force: z.boolean(),
