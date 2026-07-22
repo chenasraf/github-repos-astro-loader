@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.2.1...v1.3.0) (2026-07-22)
+
+
+### Features
+
+* **parser:** resolve README image sources to absolute GitHub raw URLs ([d0dd851](https://github.com/chenasraf/github-repos-astro-loader/commit/d0dd85181afaae2cc1acf2c66c179e68eceea3c0))
+
+
+### Bug Fixes
+
+* **types:** support zod 4 by replacing z.function with z.custom ([a0a9fc2](https://github.com/chenasraf/github-repos-astro-loader/commit/a0a9fc2f40cfbbbc1f32ad80bc7e24e178fbf163))
+
 ## [1.2.1](https://github.com/chenasraf/github-repos-astro-loader/compare/v1.2.0...v1.2.1) (2026-03-05)
 
 
